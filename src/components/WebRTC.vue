@@ -17,8 +17,8 @@
     <h2>3. Join a Call</h2>
     <p>Answer the call from a different browser window or device</p>
 
-    <input id="callInput" />
-    <button id="answerButton" :disabled="answerButtonState">Answer</button>
+    <input v-model="key" id="callInput" />
+    <button @click="joinDating" id="answerButton" :disabled="answerButtonState">Answer</button>
 
     <h2>4. Hangup</h2>
 
@@ -53,6 +53,7 @@ export default {
       callButtonState: true,
       answerButtonState: true,
       hangupButtonState: true,
+      key: '',
     };
   },
   components: {
@@ -81,11 +82,42 @@ export default {
       this.startButtonState = true;
       this.callButtonState = false;
       this.answerButtonState = false;
-      this.hangupButtonState = false;
     },
     async startDating() {
+        const offerDescription = await this.pc.createOffer();
+        console.log(offerDescription);
+        await this.pc.setLocalDescription(offerDescription);
 
-    }
+        const offer = {
+          sdp: offerDescription.sdp,
+          type: offerDescription.type,
+        };
+        console.log(offer);
+        /*getConnection(offer).then(function(data) {
+          const candidate = new RTCIceCandidate(data);
+          pc.addIceCandidate(candidate);
+        });*/
+        this.hangupButtonState = false;
+    },
+    async getConnection(offer) {
+      console.log(offer);
+      // Crida asincrona api jofre, rebem el candidat
+    },
+    async joinDating() {
+      const callId = this.key;
+      console.log(callId);
+      var answerDescription = await this.pc.createAnswer();
+      await this.pc.setLocalDescription(answerDescription);
+      var answer = {
+        type: answerDescription.type,
+        sdp: answerDescription.sdp,
+      };
+      console.log(answer);
+      /*getConnection(offer).then(function(data) {
+          let offerter = new RTCIceCandidate(data);
+          pc.addIceCandidate(offerter);
+        });*/
+    },
   },
   created() {
     this.pc = new RTCPeerConnection(this.servers);
