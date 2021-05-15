@@ -10,19 +10,19 @@
       />
     </div>
 
-    <button @click="startWebcam">Start webcam</button>
+    <button @click="startWebcam" :disabled="startButtonState">Start webcam</button>
     <h2>2. Create a new Call</h2>
-    <button id="callButton" disabled>Create Call (offer)</button>
+    <button @click="startDating" :disabled="callButtonState">Create Call (offer)</button>
 
     <h2>3. Join a Call</h2>
     <p>Answer the call from a different browser window or device</p>
 
     <input id="callInput" />
-    <button id="answerButton" disabled>Answer</button>
+    <button id="answerButton" :disabled="answerButtonState">Answer</button>
 
     <h2>4. Hangup</h2>
 
-    <button id="hangupButton" disabled>Hangup</button>
+    <button id="hangupButton" :disabled="hangupButtonState">Hangup</button>
 
     <!-- <script type="module" src="../js/call.js"></script> -->
   </div>
@@ -49,6 +49,10 @@ export default {
       pc: null,
       localeSource: null,
       remoteSource: null,
+      startButtonState: false,
+      callButtonState: true,
+      answerButtonState: true,
+      hangupButtonState: true,
     };
   },
   components: {
@@ -73,9 +77,15 @@ export default {
       };
       this.localeSource = localStream;
       this.remoteSource = remoteStream;
-
-      //this.props.localeSource = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      
+      this.startButtonState = true;
+      this.callButtonState = false;
+      this.answerButtonState = false;
+      this.hangupButtonState = false;
     },
+    async startDating() {
+
+    }
   },
   created() {
     this.pc = new RTCPeerConnection(this.servers);
